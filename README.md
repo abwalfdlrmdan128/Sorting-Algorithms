@@ -8,8 +8,7 @@ This repository contains implementations of the most popular **sorting algorithm
 1. [Introduction](#introduction)
 2. [Algorithms](#algorithms)
 3. [Complexity Table](#complexity-table)
-4. [How to Run](#how-to-run)
-5. [References](#references)
+
 
 ---
 
@@ -89,8 +88,3 @@ A sorting algorithm arranges elements of a list or array into a specific order (
 | Bucket Sort    | O(n)       | O(n)       | O(n²)      | O(n)  | ✅     |
 
 ---
-
-## 🛠 How to Run
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/YourUsername/Sorting-Algorithms.git
