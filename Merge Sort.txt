@@ -1,0 +1,203 @@
+using System;
+public abstract class DataStructures<T>
+{
+    // Displays the contents of the data structure in a readable format
+    public abstract void Display();
+    // Defines all necessary members for data structures, ensuring abstraction
+}
+public abstract class LinearData<T> : DataStructures<T>
+{
+    // Defines all necessary members for linear data structures, ensuring abstraction
+}
+public class Node<T>
+{
+    private T data;
+    private Node<T>? next;
+    // Constructor
+    public Node(T NewValue, Node<T> next = null)
+    {
+        data = NewValue;
+        this.next = next;
+    }
+    public T Data
+    {
+        get => data;
+        set => data = value;
+    }
+    // Property for Next Node Reference
+    public Node<T>? NextNode
+    {
+        get => next;
+        set => next = value;
+    }
+}
+public class SinglyLinkedList<T> : LinearData<T>
+{
+    private Node<T>? Head;
+    // Property to track the length of the LinkedList
+    public int Length { get; private set; }
+    // Constructor to create an Empty LinkedList
+    public bool IsEmpty => Length == 0;
+    public SinglyLinkedList()
+    {
+        Head = null;
+        Length = 0;
+    }
+    ~SinglyLinkedList()
+    {
+        Head = null;
+    }
+    public Node<T>? Search(T data)
+    {
+        Node<T>? temp = Head;
+        while (temp != null)
+        {
+            if (EqualityComparer<T>.Default.Equals(temp.Data, data))
+                return temp; // Return the reference to the found node
+            temp = temp.NextNode;
+        }
+        return null; // Return null if not found
+    }
+    // Insert at the head
+    public void InsertAtHead(T data)
+    {
+        Node<T> newNode = new Node<T>(data, Head);
+        Head = newNode;
+        Length++;
+    }
+    // Insert at the tail
+    public void InsertAtTail(T data)
+    {
+        Node<T> newNode = new Node<T>(data);
+
+        if (Head == null) // If the list is empty
+        {
+            Head = newNode;
+        }
+        else
+        {
+            Node<T> temp = Head;
+            while (temp.NextNode != null) // Traverse to the last node
+            {
+                temp = temp.NextNode;
+            }
+            temp.NextNode = newNode; // Append new node at the end
+        }
+        Length++;
+    }
+    // Remove from the head
+    public T RemoveAtHead()
+    {
+        if (Head == null) throw new InvalidOperationException("List is empty.");
+        T removedData = Head.Data;
+        Head = Head.NextNode;
+        Length--;
+        return removedData;
+    }
+    // Remove from the tail and return the removed item
+    public T RemoveAtTail()
+    {
+        if (Head == null) throw new InvalidOperationException("List is empty.");
+
+        T removedData;
+
+        if (Head.NextNode == null) // Single node case
+        {
+            removedData = Head.Data;
+            Head = null;
+        }
+        else
+        {
+            Node<T> temp = Head;
+            while (temp.NextNode.NextNode != null) // Traverse to second-last node
+            {
+                temp = temp.NextNode;
+            }
+            removedData = temp.NextNode.Data; // Store the last node’s data
+            temp.NextNode = null; // Remove last node
+        }
+        Length--; // Ensure the length is decremented
+        return removedData;
+    }
+    // Insert after a specific element
+    public void InsertAt(T InsertedData, T dataInsertedAfter)
+    {
+        Node<T>? targetNode = Search(dataInsertedAfter); // Use Search method to find the node
+
+        if (targetNode == null)
+            throw new InvalidOperationException("Element not found.");
+
+        // Create a new node and insert it after the found node
+        Node<T> newNode = new Node<T>(InsertedData, targetNode.NextNode);
+        targetNode.NextNode = newNode;
+        Length++;
+    }
+    public void RemoveSpecified(T RemovedData)
+    {
+        if (Head == null)
+            throw new InvalidOperationException("List is empty.");
+        // If the first node contains the data to be removed
+        if (EqualityComparer<T>.Default.Equals(Head.Data, RemovedData))
+        {
+            Head = Head.NextNode;
+            Length--;
+            return;
+        }
+        Node<T>? previous = Head;
+        while (previous.NextNode != null && !EqualityComparer<T>.Default.Equals(previous.NextNode.Data, RemovedData))
+        {
+            previous = previous.NextNode;
+        }
+        // If the element was not found
+        if (previous.NextNode == null)
+            throw new InvalidOperationException("Element not found.");
+        // Remove the node
+        previous.NextNode = previous.NextNode.NextNode;
+        Length--;
+    }
+    public static SinglyLinkedList<T> operator +(SinglyLinkedList<T> first, SinglyLinkedList<T> second)
+    {
+        // Create a new list to store the concatenation result
+        SinglyLinkedList<T> result = new SinglyLinkedList<T>();
+        // Add all elements from the first list
+        Node<T>? current = first.Head;
+        while (current != null)
+        {
+            result.InsertAtTail(current.Data);
+            current = current.NextNode;
+        }
+        // Add all elements from the second list
+        current = second.Head;
+        while (current != null)
+        {
+            result.InsertAtTail(current.Data);
+            current = current.NextNode;
+        }
+        return result;
+    }
+    public override void Display()
+    {
+        Console.Write("LinkedList Data: ");
+        Node<T>? current = Head;
+        while (current != null)
+        {
+            Console.Write(current.Data + " ");
+            current = current.NextNode;
+        }
+        Console.WriteLine();
+    }
+}
+class Program
+{
+    static void Main()
+    {
+        SinglyLinkedList<int> IntList = new SinglyLinkedList<int>();
+        IntList.InsertAtHead(10);
+        IntList.InsertAtHead(20);
+        IntList.InsertAtHead(30);
+        IntList.InsertAt(25, 20); // Insert 25 after 20
+        Console.WriteLine($"The List length is: {IntList.Length}");
+        IntList.Display();
+
+    }
+}
